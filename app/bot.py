@@ -10,7 +10,7 @@ def handle_message_payload(data):
     text = data.get("text", "").strip()
     sender = data.get("name", "")
 
-    if text.lower().startswith("!intention"):
+    if text.lower("!intention"):
         message = text[len("!intention"):].strip()
         if message:
             log_intention(message)
