@@ -10,8 +10,8 @@ def handle_message_payload(data):
     text = data.get("text", "").strip()
     sender = data.get("name", "")
 
-    if text.lower().startswith("!intention "):
-        message = text[len("!intention"):].strip()
+    if text.lower().startswith("!addintention"):
+        message = text[len("!addintention"):].strip()
         if message:
             log_intention(message)
             send_message("🙏 Your intention has been submitted anonymously.")
@@ -21,7 +21,7 @@ def handle_message_payload(data):
     elif text.lower() == "!novena":
         send_message("📿 Today’s novena message (placeholder).")
 
-    elif text.lower() == "!intentions":
+    elif text.lower() == "!getintentions":
         today_intentions = get_today_intentions()
         if today_intentions:
             message = "🕊️ *Today's Novena Intentions (so far)*:\n\n"
