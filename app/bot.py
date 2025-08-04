@@ -31,6 +31,19 @@ def handle_message_payload(data):
             message = "📭 No intentions submitted yet today. Use `!intention [your prayer]` to add one."
 
         send_message(message)
+    elif text.lower().startswith("!deleteintention"):
+        parts = text.strip().split()
+        if len(parts) != 2 or not parts[1].isdigit():
+            send_message("❌ Usage: `!deleteintention [number]`. Example: `!deleteintention 2`")
+            return
+
+        delete_index = int(parts[1]) - 1
+        success = delete_today_intention(delete_index)
+
+        if success:
+            send_message(f"✅ Intention #{parts[1]} was deleted.")
+        else:
+            send_message(f"⚠️ Could not delete intention #{parts[1]}. Make sure it's valid and from today.")
 
 
 def log_intention(msg):
@@ -59,3 +72,31 @@ def get_today_intentions():
 
     today = datetime.now().date().isoformat()
     return [i for i in intentions if i["timestamp"].startswith(today)]
+
+def delete_today_intention(index_to_delete):
+    from datetime import datetime
+
+    try:
+        with open(INTENTION_FILE, "r") as f:
+            intentions = json.load(f)
+    except FileNotFoundError:
+        return False
+
+    today = datetime.now().date().isoformat()
+
+    # Only keep intentions not from today or not the one being deleted
+    today_intentions = [i for i in intentions if i["timestamp"].startswith(today)]
+    other_intentions = [i for i in intentions if not i["timestamp"].startswith(today)]
+
+    if index_to_delete < 0 or index_to_delete >= len(today_intentions):
+        return False
+
+    # Remove the requested intention
+    del today_intentions[index_to_delete]
+
+    # Save updated file
+    new_list = other_intentions + today_intentions
+    with open(INTENTION_FILE, "w") as f:
+        json.dump(new_list, f, indent=2)
+
+    return True
