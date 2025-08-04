@@ -1,11 +1,13 @@
 from flask import Flask, request
 from app.bot import handle_message_payload
+from app.scheduler import schedule_jobs
 
 app = Flask(__name__)
+schedule_jobs()  # Start background job scheduler
 
-@app.route('/', methods=['GET'])
+@app.route('/')
 def home():
-    return "GroupMe Novena Bot is Live!"
+    return "GroupMe Novena Bot is running"
 
 @app.route('/callback', methods=['POST'])
 def callback():
